@@ -65,7 +65,10 @@ class PrettyPageHandler extends Handler
     protected $editor;
 
     /**
-     * A list of known editor strings
+     * A list of known editor strings.
+     * 
+     * @see http://www.clickoffline.com/php-development/clickable-xdebug-stack-traces-using-notepad-on-windows.html How to configure Notepad++ to open files from urls.
+     * 
      * @var array
      */
     protected $editors = array(
