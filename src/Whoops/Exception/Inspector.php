@@ -130,7 +130,7 @@ class Inspector
             $previousException = $this->exception->getPrevious();
 
             if ($previousException) {
-                $this->previousExceptionInspector = new Inspector($previousException);
+                $this->previousExceptionInspector = new static($previousException);
             }
         }
 
