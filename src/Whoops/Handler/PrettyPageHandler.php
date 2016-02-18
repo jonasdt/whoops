@@ -52,6 +52,11 @@ class PrettyPageHandler extends Handler
     private $pageTitle = "Whoops! There was an error.";
 
     /**
+     * @var array[]
+     */
+    private $globalVariables = null;
+
+    /**
      * A string identifier for a known IDE/text editor, or a closure
      * that resolves a string that can be used to open a given file
      * in an editor. If the string contains the special substrings
@@ -129,6 +134,8 @@ class PrettyPageHandler extends Handler
         $inspector = $this->getInspector();
         $frames    = $inspector->getFrames();
 
+        $globalVariables = $this->globalVariables();
+
         // List of variables that will be passed to the layout template.
         $vars = array(
             "page_title" => $this->getPageTitle(),
@@ -156,13 +163,13 @@ class PrettyPageHandler extends Handler
             "handlers"       => $this->getRun()->getHandlers(),
 
             "tables"      => array(
-                "GET Data"              => $_GET,
-                "POST Data"             => $_POST,
-                "Files"                 => $_FILES,
-                "Cookies"               => $_COOKIE,
-                "Session"               => isset($_SESSION) ? $_SESSION :  array(),
-                "Server/Request Data"   => $_SERVER,
-                "Environment Variables" => $_ENV,
+                "GET Data"              => $globalVariables["get"],
+                "POST Data"             => $globalVariables["post"],
+                "Files"                 => $globalVariables["files"],
+                "Cookies"               => $globalVariables["cookie"],
+                "Session"               => $globalVariables["session"],
+                "Server/Request Data"   => $globalVariables["server"],
+                "Environment Variables" => $globalVariables["env"],
             ),
         );
 
@@ -523,5 +530,33 @@ class PrettyPageHandler extends Handler
     public function setResourcesPath($resourcesPath)
     {
         $this->addResourcePath($resourcesPath);
+    }
+
+    /**
+     * Allows to set the global variables.
+     *
+     * @param  bool|null $value
+     * @return bool|null
+     */
+    public function globalVariables($value = null)
+    {
+        $defaults = [
+            "get"     => $_GET,
+            "post"    => $_POST,
+            "files"   => $_FILES,
+            "cookie"  => $_COOKIE,
+            "session" => isset($_SESSION) ? $_SESSION :  array(),
+            "server"  => $_SERVER,
+            "env"     => $_ENV
+        ];
+
+        if (func_num_args() == 0) {
+            if ($this->globalVariables === null) {
+                $this->globalVariables = $defaults;
+            }
+            return $this->globalVariables;
+        }
+
+        $this->globalVariables = $value + $defaults;
     }
 }
