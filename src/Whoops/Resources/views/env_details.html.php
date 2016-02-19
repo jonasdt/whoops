@@ -30,6 +30,7 @@
   </div>
 
   <?php /* List registered handlers, in order of first to last registered */ ?>
+  <?php if ($handlers): ?>
   <div class="data-table-container" id="handlers">
     <label>Registered Handlers</label>
     <?php foreach ($handlers as $i => $handler): ?>
@@ -38,5 +39,6 @@
       </div>
     <?php endforeach ?>
   </div>
+  <?php endif; ?>
 
 </div>

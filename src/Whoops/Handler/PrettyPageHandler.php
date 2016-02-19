@@ -160,7 +160,7 @@ class PrettyPageHandler extends Handler
             "frames"         => $frames,
             "has_frames"     => !!count($frames),
             "handler"        => $this,
-            "handlers"       => $this->getRun()->getHandlers(),
+            "handlers"       => $this->getRun() ? $this->getRun()->getHandlers() : [],
 
             "tables"      => array(
                 "GET Data"              => $globalVariables["get"],
