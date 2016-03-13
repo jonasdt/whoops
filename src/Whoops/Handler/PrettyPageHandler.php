@@ -61,6 +61,11 @@ class PrettyPageHandler extends Handler
     /**
      * @var array[]
      */
+    private $applicationPaths;
+
+    /**
+     * @var array[]
+     */
     private $applicationNamespaces;
 
     /**
@@ -148,6 +153,19 @@ class PrettyPageHandler extends Handler
 
         $globalVariables = $this->getGlobalVariables();
 
+        // Detect frames that belong to the application.
+        if ($this->applicationPaths) {
+            /* @var \Whoops\Exception\Frame $frame */
+            foreach ($frames as $frame) {
+                foreach ($this->applicationPaths as $path) {
+                    if (substr($frame->getFile(), 0, strlen($path)) === $path) {
+                        $frame->setApplication(true);
+                        break;
+                    }
+                }
+            }
+        }
+
         // List of variables that will be passed to the layout template.
         $vars = array(
             "page_title" => $this->getPageTitle(),
@@ -174,6 +192,9 @@ class PrettyPageHandler extends Handler
             "has_frames"     => !!count($frames),
             "handler"        => $this,
             "handlers"       => $this->getRun() ? $this->getRun()->getHandlers() : [],
+
+            "active_frames_tab" => count($frames) && $frames->offsetGet(0)->isApplication() ?  'application' : 'all',
+            "has_frames_tabs"   => !empty($this->getApplicationPaths()),
 
             "tables"      => array(
                 "GET Data"              => $globalVariables["get"],
@@ -572,6 +593,26 @@ class PrettyPageHandler extends Handler
         ];
 
         $this->globalVariables = $variables + $defaults;
+    }
+
+    /**
+     * Return the application paths.
+     *
+     * @return array
+     */
+    public function getApplicationPaths()
+    {
+        return $this->applicationPaths;
+    }
+
+    /**
+     * Set the application paths.
+     *
+     * @param array $applicationPaths
+     */
+    public function setApplicationPaths($applicationPaths)
+    {
+        $this->applicationPaths = $applicationPaths;
     }
 
     /**
