@@ -103,18 +103,18 @@ Zepto(function($) {
   }
 
   $(document).on('keydown', function(e) {
-	  if(e.ctrlKey) {
-		  // CTRL+Arrow-UP/Arrow-Down support:
+	  if(e.ctrlKey || e.which === 74  || e.which === 75) {
+		  // CTRL+Arrow-UP/k and Arrow-Down/j support:
 		  // 1) select the next/prev element
 		  // 2) make sure the newly selected element is within the view-scope
 		  // 3) focus the (right) container, so arrow-up/down (without ctrl) scroll the details
-		  if (e.which === 38 /* arrow up */) {
 			  $activeLine.prev('.frame').click();
+		  if (e.which === 38 /* arrow up */ || e.which === 75 /* k */) {
 			  scrollIntoView($activeLine, $leftPanel);
 			  $container.focus();
 			  e.preventDefault();
-		  } else if (e.which === 40 /* arrow down */) {
 			  $activeLine.next('.frame').click();
+		  } else if (e.which === 40 /* arrow down */ || e.which === 74 /* j */) {
         scrollIntoView($activeLine, $leftPanel);
 			  $container.focus();
 			  e.preventDefault();
