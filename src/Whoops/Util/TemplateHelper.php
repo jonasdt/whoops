@@ -78,6 +78,27 @@ class TemplateHelper
         );
     }
 
+    public function breakOnDelimiter($delimiter, $s)
+    {
+        $parts = explode($delimiter, $s);
+        foreach ($parts as &$part) {
+            $part = '<div class="delimiter">' . $part . '</div>';
+        }
+
+        return implode($delimiter, $parts);
+    }
+
+    public function shorten($path)
+    {
+        // Replace the part of the path that all frames have in common.
+        $dirname = dirname(dirname(dirname(dirname(dirname(dirname(__DIR__))))));
+        if ($dirname != "/") {
+            $path = str_replace($dirname, '&hellip;', $path);
+        }
+
+        return $path;
+    }
+
     private function getDumper()
     {
         if (!$this->htmlDumper && class_exists('Symfony\Component\VarDumper\Cloner\VarCloner')) {
