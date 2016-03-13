@@ -593,5 +593,25 @@ class PrettyPageHandler extends Handler
     {
         $this->applicationNamespaces = $applicationNamespaces;
     }
+
+    /**
+     * Caster that removes all internals for objects not in the namespaces defined by the application.
+     *
+     * @see AbstactCloner
+     * @return array
+     */
+    public function castObject($obj, $a, $stub, $isNested) {
+        $class = $stub->class;
+        $applicationNamespaces = $this->applicationNamespaces;
+        if (!isset(AbstractCloner::$defaultCasters[$class])) {
+            foreach ($applicationNamespaces as $namespace) {
+                if (substr($class, 0, strlen($namespace)) === $namespace) {
+                    return $a;
+                }
+            }
+            return [];
+        }
+
+        return $a;
     }
 }
