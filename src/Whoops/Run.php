@@ -39,6 +39,8 @@ final class Run
 
     protected $system;
 
+    protected $inspectorClass = Inspector::class;
+
     public function __construct(SystemFacade $system = null)
     {
         $this->system = $system ?: new SystemFacade;
@@ -105,7 +107,24 @@ final class Run
      */
     protected function getInspector($exception)
     {
-        return new Inspector($exception);
+        $class = $this->inspectorClass;
+        return new $class($exception);
+    }
+
+    /**
+     * Retun the class used to inspect the exceptions.
+     * @return string
+     */
+    public function getInspectorClass() {
+        return $this->inspectorClass;
+    }
+
+    /**
+     * Set the class used to inspect the exceptions.
+     * @return Run
+     */
+    public function setInspectorClass($class) {
+        $this->inspectorClass = $class;
     }
 
     /**
