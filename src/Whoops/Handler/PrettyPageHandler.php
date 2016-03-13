@@ -8,6 +8,8 @@ namespace Whoops\Handler;
 
 use InvalidArgumentException;
 use RuntimeException;
+use Symfony\Component\VarDumper\Cloner\AbstractCloner;
+use Symfony\Component\VarDumper\Cloner\VarCloner;
 use UnexpectedValueException;
 use Whoops\Exception\Formatter;
 use Whoops\Util\TemplateHelper;
@@ -55,6 +57,11 @@ class PrettyPageHandler extends Handler
      * @var array[]
      */
     private $globalVariables = null;
+
+    /**
+     * @var array[]
+     */
+    private $applicationNamespaces;
 
     /**
      * A string identifier for a known IDE/text editor, or a closure
@@ -120,6 +127,10 @@ class PrettyPageHandler extends Handler
 
         // @todo: Make this more dynamic
         $helper = new TemplateHelper();
+
+        $cloner = new VarCloner();
+        $cloner->addCasters(['*' => [$this, 'castObject']]);
+        $helper->setCloner($cloner);
 
         $templateFile = $this->getResource("views/layout.html.php");
         $cssFile      = $this->getResource("css/whoops.base.css");
@@ -561,5 +572,24 @@ class PrettyPageHandler extends Handler
         $this->globalVariables = $variables + $defaults;
     }
 
+    /**
+     * Return the namespaces defined by to the application.
+     *
+     * @return array
+     */
+    public function getApplicationNamespaces()
+    {
+        return $this->applicationNamespaces;
+    }
+
+    /**
+     * Set the namespaces defined by to the application.
+     *
+     * @param array $applicationNamespaces
+     */
+    public function setApplicationNamespaces($applicationNamespaces)
+    {
+        $this->applicationNamespaces = $applicationNamespaces;
+    }
     }
 }
