@@ -42,7 +42,7 @@ abstract class Handler implements HandlerInterface
     /**
      * @var bool
      */
-    private $canSendHeaders;
+    private $sendHeaders;
 
     /**
      * @param Run $run
@@ -98,22 +98,24 @@ abstract class Handler implements HandlerInterface
         return $this->exception;
     }
 
+    public function canSendHeaders()
+    {
+        if ($this->sendHeaders === null) {
+            $this->sendHeaders = Misc::canSendHeaders();
+        }
+
+        return $this->sendHeaders;
+    }
+
     /**
      * Allows to disable all attempts to dynamically decide whether to
      * send headers.
      * Set this to false to ensure that the handler will not send headers.
-     * @param  bool|null $value
-     * @return bool
+     * @param  bool $value
+     * @return null
      */
-    public function canSendHeaders($value = null)
+    public function setSendHeaders($value)
     {
-        if (func_num_args() == 0) {
-            if ($this->canSendHeaders === null) {
-                $this->canSendHeaders = Misc::canSendHeaders();
-            }
-            return $this->canSendHeaders;
-        }
-
-        $this->canSendHeaders = (bool) $value;
+        $this->sendHeaders = (bool) $value;
     }
 }
