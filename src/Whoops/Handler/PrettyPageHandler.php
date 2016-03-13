@@ -134,7 +134,7 @@ class PrettyPageHandler extends Handler
         $inspector = $this->getInspector();
         $frames    = $inspector->getFrames();
 
-        $globalVariables = $this->globalVariables();
+        $globalVariables = $this->getGlobalVariables();
 
         // List of variables that will be passed to the layout template.
         $vars = array(
@@ -532,13 +532,21 @@ class PrettyPageHandler extends Handler
         $this->addResourcePath($resourcesPath);
     }
 
+    public function getGlobalVariables()
+    {
+        if (!$this->globalVariables) {
+            $this->globalVariables = $this->setGlobalVariables([]);
+        }
+        return $this->globalVariables;
+    }
+
     /**
      * Allows to set the global variables.
      *
-     * @param  bool|null $value
-     * @return bool|null
+     * @param  array[] $variables
+     * @return null
      */
-    public function globalVariables($value = null)
+    public function setGlobalVariables($variables)
     {
         $defaults = [
             "get"     => $_GET,
@@ -550,13 +558,8 @@ class PrettyPageHandler extends Handler
             "env"     => $_ENV
         ];
 
-        if (func_num_args() == 0) {
-            if ($this->globalVariables === null) {
-                $this->globalVariables = $defaults;
-            }
-            return $this->globalVariables;
-        }
+        $this->globalVariables = $variables + $defaults;
+    }
 
-        $this->globalVariables = $value + $defaults;
     }
 }
